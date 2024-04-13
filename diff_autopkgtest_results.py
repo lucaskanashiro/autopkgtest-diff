@@ -64,7 +64,7 @@ def process_pkg(diff, pkg, arch, reference_datetime, cursor):
 
         test_run_datetime = datetime.strptime(date_string, date_format)
 
-        if(test_run_datetime <= reference_datetime):
+        if(test_run_datetime < reference_datetime):
             test_runs_before_reference[test_run_datetime] = test_run
         else:
             test_runs_after_reference[test_run_datetime] = test_run
