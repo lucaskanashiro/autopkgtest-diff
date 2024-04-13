@@ -12,7 +12,7 @@ def get_sqlite_file(autopkgtest_db):
 
 def read_input():
     pkgs = []
-    input_file = open('subscriptions', 'r')
+    input_file = open('packages', 'r')
     for pkg in input_file.readlines():
         pkgs.append(pkg.rstrip('\n'))
     return pkgs
