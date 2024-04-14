@@ -165,9 +165,9 @@ def main():
 
     [no_news, good_news, bad_news] = process_diff(diff)
 
-    output_data('no_news.json', no_news)
-    output_data('good_news.json', good_news)
-    output_data('bad_news.json', bad_news)
+    output_data("no_news_{}.json".format(reference_date), no_news)
+    output_data("good_news_{}.json".format(reference_date), good_news)
+    output_data("bad_news_{}.json".format(reference_date), bad_news)
 
 
 if __name__ == "__main__":

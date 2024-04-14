@@ -13,12 +13,12 @@ The reference date passed to the script must follow this format: `YYYY-MM-DD`.
 
 As result, 3 files containing the output of the analysis:
 
-* `no_news.json`: packages that did not change the status. The package was
+* `no_news_YYYY-MM-DD.json`: packages that did not change the status. The package was
   passing before the reference date and now it keeps passing. Or the package
   was failing and now it keeps failing.
-* `good_news.json`: packages that tests were failing before the reference date
+* `good_news_YYYY-MM-DD.json`: packages that tests were failing before the reference date
   and now they are passing.
-* `bad_news.json`: packages that tests were passing before the reference date
+* `bad_news_YYYY-MM-DD.json`: packages that tests were passing before the reference date
   and now they are failing.
 
 Some packages might not have data to be analyzed, maybe there is no data in the
