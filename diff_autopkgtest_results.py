@@ -1,20 +1,21 @@
-from datetime import datetime
+import json
+import os.path
 import sqlite3
+import sys
+import urllib.request
+from datetime import datetime
+
+URL_DATABASE = 'https://autopkgtest.ubuntu.com/static/autopkgtest.db'
 
 
 def get_sqlite_file(autopkgtest_db):
-    import os.path
     if(not os.path.isfile(autopkgtest_db)):
-        import urllib.request
-        url_database = 'https://autopkgtest.ubuntu.com/static/autopkgtest.db'
-        urllib.request.urlretrieve(url_database, autopkgtest_db)
+        urllib.request.urlretrieve(URL_DATABASE, autopkgtest_db)
 
 
 def read_input():
-    pkgs = []
-    input_file = open('packages', 'r')
-    for pkg in input_file.readlines():
-        pkgs.append(pkg.rstrip('\n'))
+    with open('packages', 'r') as input_file:
+        pkgs = [pkg.rstrip('\n') for pkg in input_file]
     return pkgs
 
 
@@ -42,7 +43,7 @@ def query_pkg(pkg, arch, cursor):
         return data
     except sqlite3.Error as error:
         print("Failed to execute the query", error)
-        return None
+        raise Exception("SQL query failed!")
 
 
 def process_pkg(diff, pkg, arch, reference_datetime, cursor):
@@ -125,7 +126,6 @@ def process_diff(diff):
 def output_data(filename, data):
     output = open(filename, 'w')
 
-    import json
     formatted_json = json.dumps(data, indent=4)
     output.write(formatted_json)
 
@@ -134,7 +134,6 @@ def output_data(filename, data):
 
 def main():
     # Get reference date from CLI
-    import sys
     reference_date = sys.argv[1]
 
     datetime_format = '%Y-%m-%d'
