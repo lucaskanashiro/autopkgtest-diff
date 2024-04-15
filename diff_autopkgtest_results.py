@@ -82,6 +82,7 @@ def process_pkg(diff, pkg, arch, reference_datetime, cursor):
 
 
 def fill_data(data, arch, pkg, diff):
+    data[pkg] = {}
     data[pkg][arch] = {}
     data[pkg][arch]['before'] = {}
     data[pkg][arch]['after'] = {}
@@ -103,9 +104,6 @@ def process_diff(diff):
     bad_news = {}
 
     for pkg in diff.keys():
-        no_news[pkg] = {}
-        good_news[pkg] = {}
-        bad_news[pkg] = {}
         for arch in diff[pkg].keys():
             if(diff[pkg][arch] is not None):
                 exit_code_test_run_before_reference = diff[pkg][arch][0][1]
