@@ -96,19 +96,39 @@ def build_test_log_url(pkg, arch, test_id):
     return "https://autopkgtest.ubuntu.com/results/{}".format(path)
 
 
+def get_test_results(exit_code):
+    results = {
+            0: 'all tests passed',
+            2: 'at least one test was skipped \
+                    (or at least one flaky test failed)',
+            4: 'at least one test failed',
+            6: 'at least one test failed and at least one test skipped',
+            8: 'no tests in this package, \
+                    or all non-superficial tests were skipped',
+            12: 'erroneous package',
+            14: 'erroneous package and at least one test skipped',
+            16: 'testbed failure',
+            20: 'other unexpected failures including bad usage'
+    }
+
+    return results[exit_code]
+
+
 def fill_data(data, arch, pkg, diff):
     data[pkg] = {}
     data[pkg][arch] = {}
     data[pkg][arch]['before'] = {}
     data[pkg][arch]['after'] = {}
 
-    data[pkg][arch]['before']['exit_code'] = diff[pkg][arch][0][1]
+    data[pkg][arch]['before']['result'] = get_test_results(
+            diff[pkg][arch][0][1])
     data[pkg][arch]['before']['test_run_id'] = diff[pkg][arch][0][0]
     data[pkg][arch]['before']['triggers'] = diff[pkg][arch][0][4]
     data[pkg][arch]['before']['test_log'] = build_test_log_url(
             pkg, arch, diff[pkg][arch][0][0])
 
-    data[pkg][arch]['after']['exit_code'] = diff[pkg][arch][1][1]
+    data[pkg][arch]['after']['result'] = get_test_results(
+            diff[pkg][arch][1][1])
     data[pkg][arch]['after']['test_run_id'] = diff[pkg][arch][1][0]
     data[pkg][arch]['after']['triggers'] = diff[pkg][arch][1][4]
     data[pkg][arch]['after']['test_log'] = build_test_log_url(
