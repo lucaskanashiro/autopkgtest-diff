@@ -6,17 +6,17 @@ import urllib.request
 from datetime import datetime
 
 URL_DATABASE = 'https://autopkgtest.ubuntu.com/static/autopkgtest.db'
+URL_PKGS_PER_TEAM = 'http://reqorts.qa.ubuntu.com/reports/m-r-package-team-mapping.json'
+
+
+def load_pkgs_per_team():
+    response = urllib.request.urlopen(URL_PKGS_PER_TEAM)
+    return json.loads(response.read())
 
 
 def get_sqlite_file(autopkgtest_db):
     if(not os.path.isfile(autopkgtest_db)):
         urllib.request.urlretrieve(URL_DATABASE, autopkgtest_db)
-
-
-def read_input():
-    with open('packages', 'r') as input_file:
-        pkgs = [pkg.rstrip('\n') for pkg in input_file]
-    return pkgs
 
 
 def connect_db(database_file):
@@ -173,13 +173,16 @@ def output_data(filename, data):
 def main():
     # Get reference date from CLI
     reference_date = sys.argv[1]
+    packaging_team = sys.argv[2]
 
     datetime_format = '%Y-%m-%d'
     reference_datetime = datetime.strptime(reference_date, datetime_format)
 
     autopkgtest_db = 'autopkgtest.db'
     get_sqlite_file(autopkgtest_db)
-    pkgs = read_input()
+
+    pkgs_per_team = load_pkgs_per_team()
+    pkgs  = pkgs_per_team[packaging_team]
 
     cursor = connect_db(autopkgtest_db)
     if(cursor is None):
@@ -200,9 +203,12 @@ def main():
 
     [no_news, good_news, bad_news] = process_diff(diff)
 
-    output_data("no_news_{}.json".format(reference_date), no_news)
-    output_data("good_news_{}.json".format(reference_date), good_news)
-    output_data("bad_news_{}.json".format(reference_date), bad_news)
+    output_data("no_news_{}_{}.json".format(reference_date, packaging_team),
+            no_news)
+    output_data("good_news_{}_{}.json".format(reference_date, packaging_team),
+            good_news)
+    output_data("bad_news_{}_{}.json".format(reference_date, packaging_team),
+            bad_news)
 
 
 if __name__ == "__main__":
