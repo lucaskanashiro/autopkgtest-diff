@@ -57,8 +57,11 @@ def process_pkg(diff, pkg, arch, reference_datetime, cursor):
         return None
 
     for test_run in data:
+        # workaround old test ids in this format: 20151014_111554@
+        test_run_data = test_run[0][:-1]
+
         # id example: 20240329_175621_aafd4@
-        split_id = test_run[0].split('_')
+        split_id = test_run_data.split('_')
 
         date_string = split_id[0] + split_id[1]
         date_format = "%Y%m%d%H%M%S"
