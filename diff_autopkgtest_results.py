@@ -102,19 +102,20 @@ def build_test_log_url(pkg, arch, test_id):
 def get_test_results(exit_code):
     results = {
             0: 'all tests passed',
-            2: 'at least one test was skipped \
-                    (or at least one flaky test failed)',
+            2: 'at least one test was skipped (or at least one flaky test failed)',
             4: 'at least one test failed',
             6: 'at least one test failed and at least one test skipped',
-            8: 'no tests in this package, \
-                    or all non-superficial tests were skipped',
+            8: 'no tests in this package, or all non-superficial tests were skipped',
             12: 'erroneous package',
             14: 'erroneous package and at least one test skipped',
             16: 'testbed failure',
             20: 'other unexpected failures including bad usage'
     }
 
-    return results[exit_code]
+    try:
+        return results[exit_code]
+    except KeyError:
+        return "exit code unknown: {}".format(exit_code)
 
 
 def fill_data(data, arch, pkg, diff):
