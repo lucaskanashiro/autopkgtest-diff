@@ -82,6 +82,20 @@ def process_pkg(diff, pkg, arch, reference_datetime, cursor):
     return [latest_run_before_reference, latest_run_after_reference]
 
 
+def build_test_log_url(pkg, arch, test_id):
+    RELEASE = "noble"
+
+    if(pkg.startswith('lib')):
+        prefix = pkg[0:4]
+    else:
+        prefix = pkg[0]
+
+    path = "autopkgtest-{}/{}/{}/{}/{}/{}/log.gz".format(
+        RELEASE, RELEASE, arch, prefix, pkg, test_id)
+
+    return "https://autopkgtest.ubuntu.com/results/{}".format(path)
+
+
 def fill_data(data, arch, pkg, diff):
     data[pkg] = {}
     data[pkg][arch] = {}
@@ -91,10 +105,14 @@ def fill_data(data, arch, pkg, diff):
     data[pkg][arch]['before']['exit_code'] = diff[pkg][arch][0][1]
     data[pkg][arch]['before']['test_run_id'] = diff[pkg][arch][0][0]
     data[pkg][arch]['before']['triggers'] = diff[pkg][arch][0][4]
+    data[pkg][arch]['before']['test_log'] = build_test_log_url(
+            pkg, arch, diff[pkg][arch][0][0])
 
     data[pkg][arch]['after']['exit_code'] = diff[pkg][arch][1][1]
     data[pkg][arch]['after']['test_run_id'] = diff[pkg][arch][1][0]
     data[pkg][arch]['after']['triggers'] = diff[pkg][arch][1][4]
+    data[pkg][arch]['after']['test_log'] = build_test_log_url(
+            pkg, arch, diff[pkg][arch][1][0])
 
     return data
 
